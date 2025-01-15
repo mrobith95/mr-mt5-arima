@@ -26,20 +26,39 @@ If you prefer an always up-to-date model, you can instead train a new ARIMA mode
 You need the following to run these codes:
 * Spreadsheet Editor (like Excel)
 * Python 3.8.10
+* pandas 1.4.2
+* numpy 1.22.3
+* MetaTrader 5.0.37
+* pytz 2023.3.post1
+* statsmodels 0.13.2
+
+Last 5 items are python packages, that could be installed using `pip`
 
 ## Installation and Usage
-Follow this steps to use this project:
+This part would be separated by into sub-sections.
+
+### Preparation
 1. Download the entire project as ZIP. Click on Green `Code` button -> Download as ZIP.
 2. Extract the downloaded ZIP.
-3. Edit `input-data.xlsx` data with the following:
-   * test
+3. Edit the following sheets on `input-data.xlsx`:
+   * `Login and Settings` sheet with account informations:
+     * `Acc. Number` with your Account Number.
+     * `Password` with that account's password.
+     * `Server` with the server assigned for that account.
+   * `Pair Table` sheet with financial instrument information that you want to forecast:
+     * `simbol` are filled with the symbol name for financial instruments you want to forecast.
+     * `timeframe` are filled with timeframe of the chart. Also determine the forecast frequency. Only accept `M1, M5, M15, M30, H1, H4, D1, W1, MN`.
+     * (optional) `starting date` are filled with the _ending_ date when retrieve data using `get_data_recent.py`. When it is empty, it is using the most recent data available on your MT5.
+
+You can only fill 1 row of `Login and Settings` sheet, but you can write more tahn 1 row for `Pair Table` sheet when you need to forecast some instruments, for example.
+
 4. Open your MT5 desktop application, then open new charts for each pair of symbol/timeframe specified in `Pair Table` sheet. This is to make sure that your local MT5 is updated with recent data.
 
 ### Obtain financial data
 There are 2 ways to obtain data for `train_new_model.py`:
 
 #### using `get_data_recent.py`
-1. Edit the `train data name` column on `Pair Table` sheet for each symbol/timeframe rows there. This column would serve as model name.
+1. Edit the `train data name` column on `Pair Table` sheet for each symbol/timeframe rows there. This column would serve as training data name.
 2. Just run `get_data_recent.py` to obtain financial data on your MT5, either by double-click the file or run it via your IDE (python's IDLE / VScode)
 
 #### using `repair_history_data.py`
@@ -50,6 +69,17 @@ There are 2 ways to obtain data for `train_new_model.py`:
 5. Enter the name of downloaded file in `train data name` column, same row as matched symbol/timeframe, in `Pair Table` sheet.
 6. Redo step 2 - 5 for other symbol/timeframe rows on `Pair Table` sheet.
 7. Run `repair_history_data.py`, either by double-click the file or run it via your IDE (python's IDLE / VScode)
+
+### ARIMA fitting using `train_new_model.py`
+Just run `train_new_model.py` to fit an ARIMA models for each symbol/timeframe pair specified in `Pair Table` sheet. You would receive 2 copies of `.pkl` file containing fitted ARIMA model for each symbol/timeframe pairs, 1 for forecasting and 1 for your archive.
+
+### Use fitted models for forecasting
+Run `core-arima-pretrain.py` to use your fitted models for forecasting. New forecast would appear in the terminal each time a new candle show up.
+
+Here's how to read the output...
+
+### Online ARIMA fitting
+You can also fit an ARIMA model each time a new candle show up by running `core-arima-pretrain.py` instead. The way it's forecast shown is similar with `core-arima-pretrain.py`, but it is slower due to parameter tuning.
 
 ## Disclaimer
 The forecast generated from this project are for informational purposes only and should not be considered financial advice.
