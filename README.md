@@ -84,6 +84,6 @@ Run `core-arima-pretrain.py` to use your fitted models for forecasting. New fore
 Here's how to read the output...
 
 ### Online ARIMA fitting
-You can also fit an ARIMA model each time a new candle show up by running `core-arima-pretrain.py` instead. The way it's forecast shown is similar with `core-arima-pretrain.py`, but it is slower due to parameter tuning.
+You can also fit an ARIMA model each time a new candle show up by running `core-arima-online.py` instead. The way it's forecast shown is similar with `core-arima-pretrain.py`, but it is slower due to parameter tuning.
 
 
