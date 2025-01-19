@@ -62,11 +62,11 @@ You can only fill 1 row of `Login and Settings` sheet, but you can write more th
 ### Obtain financial data
 There are 2 ways to obtain data for `train_new_model.py`:
 
-#### using `get_data_recent.py`
+#### Retrieve directly from charts
 1. Edit the `train data name` column on `Pair Table` sheet for each symbol/timeframe rows there. This column would serve as training data name.
 2. Run `get_data_recent.py` to obtain financial data on your MT5, either by double-click the file or run it via your IDE (python's IDLE / VScode)
 
-#### using `repair_history_data.py`
+#### Using History Center
 1. Visit your MT5's History Center using View -> Symbols -> Bars.
 2. Choose symbol, timeframe, starting date and ending date, then click `Request`. Make sure symbol and timeframe match symbol/timeframe on `Pair Table` sheet.
 3. After data is fully dowloaded, click `Export Bars`.
@@ -76,7 +76,7 @@ There are 2 ways to obtain data for `train_new_model.py`:
 7. Run `repair_history_data.py`, either by double-click the file or run it via your IDE (python's IDLE / VScode)
 
 ### ARIMA fitting
-Run `train_new_model.py` to fit an ARIMA models for each symbol/timeframe pair specified in `Pair Table` sheet. You would receive 2 copies of `.pkl` file containing fitted ARIMA model for each symbol/timeframe pairs, 1 for forecasting and 1 for your archive.
+Run `train_new_model.py` to fit an ARIMA models for each symbol/timeframe pair specified in `Pair Table` sheet. You will receive 2 copies of `.pkl` file containing fitted ARIMA model for each symbol/timeframe pairs, 1 for forecasting and 1 for your archive.
 
 ### Use fitted models for forecasting
 Run `core-arima-pretrain.py` to use your fitted models for forecasting. New forecast would appear in the terminal each time a new candle show up.
