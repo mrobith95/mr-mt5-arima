@@ -60,7 +60,7 @@ You can only fill 1 row of `Login and Settings` sheet, but you can write more th
 4. Open your MT5 desktop application, then open new charts for each pair of symbol/timeframe specified in `Pair Table` sheet. This is to make sure that your local MT5 is updated with recent data.
 
 ### Obtain financial data
-There are 2 ways to obtain data for `train_new_model.py`:
+There are 2 ways to obtain data for fitting models:
 
 #### Retrieve directly from charts
 1. Edit the `train data name` column on `Pair Table` sheet for each symbol/timeframe rows there. This column would serve as training data name.
