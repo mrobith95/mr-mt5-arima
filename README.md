@@ -86,4 +86,7 @@ Here's how to read the output...
 ### Online ARIMA fitting
 You can also fit an ARIMA model each time a new candle show up by running `core-arima-online.py` instead. The way it's forecast shown is similar with `core-arima-pretrain.py`, but it is slower due to parameter tuning.
 
+### Stopping the program
+Click on your terminal (the same place where forecasts are shown) and press `Ctrl + C` on your keyboard.
+
 
