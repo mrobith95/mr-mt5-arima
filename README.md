@@ -4,8 +4,8 @@ A set of python script to forecast financial market data on your Metatrader5 usi
 ## Introduction
 Accurate forecasting of financial markets is crucial for successful trading. This project aims to provide traders with an easily implementable solution for generating price forecasts directly from their MT5 environment. ARIMA itself is a simple model to tune and fit, making it suitable in either in offline or online fitting scenario.
 
-## Disclaimer
-The forecast generated from this project are for informational purposes only and should not be considered financial advice.
+## ⚠️__Disclaimer__⚠️
+__The forecast generated from this project are for informational purposes only and should not be considered financial advice.__
 
 ## Features
 * 2 ways to obtain/manage data: automated data retrieval from MT5 chart, or use bars data retrieved from MT5 History Center.
@@ -34,8 +34,9 @@ You need the following to run these codes:
 * MetaTrader 5.0.37
 * pytz 2023.3.post1
 * statsmodels 0.13.2
+* tabulate 0.9.0
 
-Last 5 items are python packages, that could be installed using `pip`
+Last 6 items are python packages, that could be installed using `pip install <package_name>==<version_number>`
 
 ## Installation and Usage
 This part would be separated by into sub-sections.
@@ -51,11 +52,11 @@ This part would be separated by into sub-sections.
    * `Pair Table` sheet with financial instrument information that you want to forecast:
      * `simbol` are filled with the symbol/ticker name for financial instruments you want to forecast. Make sure they are exist on your MT5's Symbol list.
      * `timeframe` are filled with timeframe of the chart. Also determine the forecast frequency. Only accept `M1, M5, M15, M30, H1, H4, D1, W1, MN`.
-     * (optional) `starting date` are filled with the _ending_ date when retrieve data using `get_data_recent.py`. This input use YYYYMMDD format. When it is empty, it is using the most recent data available on your MT5.
+     * `train data name` will become the file name of retrieved data, data used for training, and trained model. You can fill this later if you wish.
 
 You can only fill 1 row of `Login and Settings` sheet, but you can write more than 1 row for `Pair Table` sheet when you need to forecast some instruments, for example.
 
-![isi pair table](https://github.com/user-attachments/assets/77042892-3284-426f-82e9-faab6de79b67)
+![isi pair table](https://github.com/user-attachments/assets/b6fb5e54-5ebe-4827-9017-c4131ffe4cf9)
 
 4. Open your MT5 desktop application, then open new charts for each pair of symbol/timeframe specified in `Pair Table` sheet. This is to make sure that your local MT5 is updated with recent data.
 
@@ -82,6 +83,19 @@ Run `train_new_model.py` to fit an ARIMA models for each symbol/timeframe pair s
 Run `core-arima-pretrain.py` to use your fitted models for forecasting. New forecast would appear in the terminal each time a new candle show up.
 
 Here's how to read the output...
+
+![baca error](https://github.com/user-attachments/assets/35475fa4-99c4-4b6c-aa9b-31861619e4a9)
+
+* Time: The time as specified at time entry on _current_ (forming) candle.
+* Symbol: Symbol/Ticker name
+* Error: Error in terms of point. Only appears on second or later prediction shown.
+* [model_name] model: Rough description about fitted ARIMA model.
+* Prediction table, consist of:
+  * Candle index. 0 means current candle. 1 means candle after current candle, 2 means after that, etc.
+  * Prediction: Model's main prediction.
+  * Lower Limit - Upper Limit: 95% Prediction Interval limit. More specifically, Limits are on 2.5% - 97.5% quantile.
+* Elapsed time: Time spent on performing and show prediction.
+
 
 ### Online ARIMA fitting
 You can also fit an ARIMA model each time a new candle show up by running `core-arima-online.py` instead. The way it's forecast shown is similar with `core-arima-pretrain.py`, but it is slower due to parameter tuning.
