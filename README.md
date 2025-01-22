@@ -61,23 +61,24 @@ You can only fill 1 row of `Login and Settings` sheet, but you can write more th
 4. Open your MT5 desktop application, then open new charts for each pair of symbol/timeframe specified in `Pair Table` sheet. This is to make sure that your local MT5 is updated with recent data.
 
 ### Obtain financial data
-There are 2 ways to obtain data for fitting models:
+There are 2 ways to obtain data for fitting models. Any data obtained would be saved in `training data` folder:
 
 #### Retrieve directly from charts
 1. Edit the `train data name` column on `Pair Table` sheet for each symbol/timeframe rows there. This column would serve as training data name.
 2. Run `get_data_recent.py` to obtain financial data on your MT5, either by double-click the file or run it via your IDE (python's IDLE / VScode)
 
 #### Using History Center
-1. Visit your MT5's History Center using View -> Symbols -> Bars.
-2. Choose symbol, timeframe, starting date and ending date, then click `Request`. Make sure symbol and timeframe match symbol/timeframe on `Pair Table` sheet.
-3. After data is fully dowloaded, click `Export Bars`.
-4. Rename the filename if needed, then save it to the same folder as this project's folder.
-5. Enter the name of downloaded file in `train data name` column, same row as matched symbol/timeframe, in `Pair Table` sheet.
-6. Redo step 2 - 5 for other symbol/timeframe rows on `Pair Table` sheet.
-7. Run `repair_history_data.py`, either by double-click the file or run it via your IDE (python's IDLE / VScode)
+1. Make an empty folder named `training data` in the same folder as this project.
+2. Visit your MT5's History Center using View -> Symbols -> Bars.
+3. Choose symbol, timeframe, starting date and ending date, then click `Request`. Make sure symbol and timeframe match symbol/timeframe on `Pair Table` sheet.
+4. After data is fully dowloaded, click `Export Bars`.
+5. Rename the filename if needed, then save it to the `training data` folder you just made at step 1.
+6. Enter the name of downloaded file in `train data name` column, same row as matched symbol/timeframe, in `Pair Table` sheet.
+7. Redo step 3 - 6 for other symbol/timeframe rows on `Pair Table` sheet.
+8. Run `repair_history_data.py`, either by double-click the file or run it via your IDE (python's IDLE / VScode)
 
 ### ARIMA fitting
-Run `train_new_model.py` to fit an ARIMA models for each symbol/timeframe pair specified in `Pair Table` sheet. You will receive 2 copies of `.pkl` file containing fitted ARIMA model for each symbol/timeframe pairs, 1 for forecasting and 1 for your archive.
+Run `train_new_model.py` to fit an ARIMA models for each symbol/timeframe pair specified in `Pair Table` sheet. Any data obtained would be saved in `arimas` folder.
 
 ### Use fitted models for forecasting
 Run `core-arima-pretrain.py` to use your fitted models for forecasting. New forecast would appear in the terminal each time a new candle show up.
@@ -102,5 +103,10 @@ You can also fit an ARIMA model each time a new candle show up by running `core-
 
 ### Stopping the program
 Click on your terminal (the same place where forecasts are shown) and press `Ctrl + C` on your keyboard.
+
+### Logs and Archives ###
+Each time you run `get_data_recent.py` or `train_new_model.py`, you will also receive a copy of data/model for archiving. This archives are flagged by `_[recent data]` in their name. Note that `[recent data]` is taken from the date data of latest candle.
+
+Model's performance log can be obtained from `logs` folder. Error on the log is the same as error shown on your terminal.
 
 
