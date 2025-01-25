@@ -1,6 +1,6 @@
 print('loading preparations...')
 import pandas as pd
-import numpy as np
+import os
 import MetaTrader5 as mt5
 import pytz
 from datetime import datetime, timedelta
@@ -43,6 +43,10 @@ else:
 
 ## determine how many symbol/timeframe combo
 n_pair = len(tabel_pair)
+
+## check if training data folder exist, then make it if it is not
+if not os.path.isdir('training data'):
+    os.makedirs('training data')
 
 for k in range(n_pair): ## for each pair...
     simbol = tabel_pair['simbol'][k]  ## obtain symbol name
@@ -123,47 +127,25 @@ for k in range(n_pair): ## for each pair...
 
     # ## the rest of this code is simply for saving the csv
     ## save file into csv
-    rates_frame.to_csv(tabel_pair['train data name'][k]+'.csv', index=False)
+    rates_frame.to_csv('training data/'+tabel_pair['train data name'][k]+'.csv', index=False)
 
-    # ## this part was used for auto-naming csv. Would be deleted in the future
-    # ## prepare name of the symbol and timeframe 
-    # namanya = simbol
-    # if waktuframe == mt5.TIMEFRAME_M1:
-    #     namanya = namanya+'_M1'
-    # elif waktuframe == mt5.TIMEFRAME_M5:
-    #     namanya = namanya+'_M5'
-    # elif waktuframe == mt5.TIMEFRAME_M15:
-    #     namanya = namanya+'_M15'
-    # elif waktuframe == mt5.TIMEFRAME_M30:
-    #     namanya = namanya+'_M30'
-    # elif waktuframe == mt5.TIMEFRAME_H1:
-    #     namanya = namanya+'_H1'
-    # elif waktuframe == mt5.TIMEFRAME_H4:
-    #     namanya = namanya+'_H4'
-    # elif waktuframe == mt5.TIMEFRAME_D1:
-    #     namanya = namanya+'_D1'
-    # elif waktuframe == mt5.TIMEFRAME_W1:
-    #     namanya = namanya+'_W1'
-    # elif waktuframe == mt5.TIMEFRAME_MN1:
-    #     namanya = namanya+'_MN1'
-    # else:
-    #     namanya = namanya+'_UNKNOWN'
-
-    # ## prepare string for file name
-    # tanggal = rates_frame['time'][40-1]
-    # namadate = str(tanggal.year)
-    # if len(str(tanggal.month)) < 2:
-    #     namadate = namadate+'0'
-    # namadate = namadate+str(tanggal.month)
-    # if len(str(tanggal.day)) < 2:
-    #     namadate = namadate+'0'
-    # namadate = namadate+str(tanggal.day)
-    # if len(str(tanggal.hour)) < 2:
-    #     namadate = namadate+'0'
-    # namadate = namadate+str(tanggal.hour)
-    # if len(str(tanggal.minute)) < 2:
-    #     namadate = namadate+'0'
-    # namadate = namadate+str(tanggal.minute)
+    ## this part for archiving
+    ## prepare string for file name
+    tanggal = rates_frame['time'][40-1]
+    namadate = str(tanggal.year)
+    if len(str(tanggal.month)) < 2:
+        namadate = namadate+'0'
+    namadate = namadate+str(tanggal.month)
+    if len(str(tanggal.day)) < 2:
+        namadate = namadate+'0'
+    namadate = namadate+str(tanggal.day)
+    if len(str(tanggal.hour)) < 2:
+        namadate = namadate+'0'
+    namadate = namadate+str(tanggal.hour)
+    if len(str(tanggal.minute)) < 2:
+        namadate = namadate+'0'
+    namadate = namadate+str(tanggal.minute)
+    rates_frame.to_csv('training data/'+tabel_pair['train data name'][k]+'_'+namadate+'.csv', index=False)
 
     print(f'saving {tabel_pair["train data name"][k]+".csv"} done') # printing
 

@@ -1,8 +1,8 @@
 print('loading preparations...')
 import pandas as pd
-import numpy as np
-import pytz
-from datetime import datetime, timedelta
+##import numpy as np
+##import pytz
+from datetime import datetime
 from timeit import default_timer as timer
 
 '''
@@ -28,7 +28,7 @@ for kk in range(n_pair):
     namanya = nama_data[kk] 
 
     ## read data.
-    data = pd.read_csv(namanya+'.csv', sep='\t')
+    data = pd.read_csv('training data/'+namanya+'.csv', sep='\t')
     n_data = len(data) ## amount of data/bars
 
     ## important note
@@ -109,7 +109,25 @@ for kk in range(n_pair):
     out_pd = pd.DataFrame.from_dict(out_dict)
 
     ## save it to csv
-    out_pd.to_csv(namanya+'.csv', index=False)
+    out_pd.to_csv('training data/'+namanya+'.csv', index=False)
+
+    ## this part for archiving
+    ## prepare string for file name
+    tanggal = out_pd['time'][n_data-1]
+    namadate = str(tanggal.year)
+    if len(str(tanggal.month)) < 2:
+        namadate = namadate+'0'
+    namadate = namadate+str(tanggal.month)
+    if len(str(tanggal.day)) < 2:
+        namadate = namadate+'0'
+    namadate = namadate+str(tanggal.day)
+    if len(str(tanggal.hour)) < 2:
+        namadate = namadate+'0'
+    namadate = namadate+str(tanggal.hour)
+    if len(str(tanggal.minute)) < 2:
+        namadate = namadate+'0'
+    namadate = namadate+str(tanggal.minute)
+    out_pd.to_csv('training data/'+namanya+'_'+namadate+'.csv', index=False)
 
     print(f'repair {namanya+".csv"} done') # printing
 

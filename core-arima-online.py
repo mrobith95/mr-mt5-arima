@@ -12,6 +12,7 @@ from statsmodels.tsa.arima.model import ARIMA
 from statsmodels.iolib.smpickle import load_pickle
 import warnings ## NOTE: This is for suppress WARNING!
 from timeit import default_timer as def_timer
+from tabulate import tabulate
 
 ## To check: arima models trained from here should
 ## make arimas-online folder and several model with
@@ -49,6 +50,16 @@ def repair_number_mat(matrik, poin, digit, tipe):
             aja = aja + ' - ' + str(tulis)
             
     return aja
+
+## for printing on tabulate
+def repair_number_tab(matrik, poin, digit, tipe):
+    ini_list = []
+    panjang = len(matrik)
+    for a in range(panjang):
+        tulis = repair_number(matrik[a], poin, digit, tipe)
+        ini_list.append(tulis)
+
+    return ini_list
 
 ## rounding + display for error
 def repair_error(number, poin):
@@ -284,6 +295,10 @@ galat = np.zeros((n_pair))
 now = datetime.now()
 dt_string = now.strftime("%Y%m%d%H%M%S")
 
+## check if logs folder exist, then make it if it is not
+if not os.path.isdir('logs'):
+    os.makedirs('logs')
+
 warnings.filterwarnings('ignore') ## NOTE: This will suppress ANY WARNING!
 
 for k in range(0,n_pair):
@@ -293,7 +308,7 @@ for k in range(0,n_pair):
     poin = np.float_power(10,-1*infosimbol.digits) ## get numbers behind decimal
 
 ## get recent finished candle, and save it's time
-    timer_rates = mt5.copy_rates_from_pos(simbol, waktuframe, 1, 1)
+    timer_rates = mt5.copy_rates_from_pos(simbol, waktuframe, 0, 1)
     timer_frame = pd.DataFrame(timer_rates)
     timer_frame['time']=pd.to_datetime(timer_frame['time'], unit='s')
     saatini.append(timer_frame["time"][0])
@@ -304,7 +319,7 @@ for k in range(0,n_pair):
 ##  write csv of record
 ##    datas.append([])
 ##    datas[k].append(["Timestamp", "prediction", "close"])
-    with open(namanama[k], 'w', newline='') as file:
+    with open('logs/'+namanama[k], 'w', newline='') as file:
         writer = csv.writer(file)
         writer.writerow(["Timestamp", "Prediction", "Actual", "2.5% Quant", "97.5% Quant",
                          "Prediction 2", "Prediction 3", "Prediction 4", "Prediction 5",
@@ -328,7 +343,7 @@ while True: ## need better command than while maybe
         file_path = namamodel[k] ## get model name
         
         ## get candles, for timer
-        timer_rates  = mt5.copy_rates_from_pos(simbol, waktuframe, 1, 1)
+        timer_rates  = mt5.copy_rates_from_pos(simbol, waktuframe, 0, 1)
         timer_frame = pd.DataFrame(timer_rates)
         timer_frame['time']=pd.to_datetime(timer_frame['time'], unit='s')
         
@@ -347,6 +362,24 @@ while True: ## need better command than while maybe
 
             # convert time in seconds into the datetime format
             rates_frame['time']=pd.to_datetime(rates_frame['time'], unit='s')
+
+            ## logging training data
+            ## prepare string for file name
+            tanggal = rates_frame['time'][40-1]
+            namadate = str(tanggal.year)
+            if len(str(tanggal.month)) < 2:
+                namadate = namadate+'0'
+            namadate = namadate+str(tanggal.month)
+            if len(str(tanggal.day)) < 2:
+                namadate = namadate+'0'
+            namadate = namadate+str(tanggal.day)
+            if len(str(tanggal.hour)) < 2:
+                namadate = namadate+'0'
+            namadate = namadate+str(tanggal.hour)
+            if len(str(tanggal.minute)) < 2:
+                namadate = namadate+'0'
+            namadate = namadate+str(tanggal.minute)
+            rates_frame.to_csv('training data/'+file_path+'_'+namadate+'.csv', index=False)
                          
             ##  ##these line might be important in the future       
             #### remove real_volume since always zeros for forex(?)
@@ -387,7 +420,7 @@ while True: ## need better command than while maybe
                 t33 = repair_number(upperl[k,2], poinset[k], digitset[k], "floor")
                 t34 = repair_number(upperl[k,3], poinset[k], digitset[k], "floor")
                 t35 = repair_number(upperl[k,4], poinset[k], digitset[k], "floor")
-                with open(namanama[k], 'a', newline='') as file:
+                with open('logs/'+namanama[k], 'a', newline='') as file:
                     writer = csv.writer(file)
                     writer.writerow([saatini[k], t1, t2, t3, t4,
                                      t12, t13, t14, t15,
@@ -398,7 +431,7 @@ while True: ## need better command than while maybe
 
             ## train new model
             start_timer = def_timer() ## start timer
-            model = train_model(close_np, file_path)
+            model = train_model(close_np[:39], file_path)
 
             ## predict
             hasil_fore = model.get_forecast(steps = 5)   
@@ -422,10 +455,16 @@ while True: ## need better command than while maybe
 
             print(file_path+' '+cetak_param)
             
-##            ## printing stuff
-            print("Prediciton :", repair_number_mat(pred[k,:], poinset[k], digitset[k], 'round'))
-            print("Lower Limit:", repair_number_mat(lowerl[k,:], poinset[k], digitset[k], 'ceil'))
-            print("Upper Limit:", repair_number_mat(upperl[k,:], poinset[k], digitset[k], 'floor'))
+##          # printing stuff
+            ini_dict = {
+                "Candle": ["0 (Current)", "1", "2", "3", "4"],
+                "Lower Limit": repair_number_tab(lowerl[k,:], poinset[k], digitset[k], 'ceil'),
+                "Prediction":  repair_number_tab(pred[k,:], poinset[k], digitset[k], 'round'),
+                "Upper Limit": repair_number_tab(upperl[k,:], poinset[k], digitset[k], 'floor')
+            }
+            print(tabulate(ini_dict,
+               headers=ini_dict.keys(),
+               tablefmt = 'outline'))
             print(f"Elapsed time: {(end_timer - start_timer):.2f} sec")
 ##
 

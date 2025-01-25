@@ -1,5 +1,5 @@
 print('loading preparations...')
-from datetime import datetime, timedelta
+from datetime import datetime
 import pandas as pd
 import numpy as np
 from statsmodels.tsa.arima.model import ARIMA
@@ -142,10 +142,6 @@ def train_model(datanya, file_path):
     fitted = finmod.fit() ## fitted is the best model
     ## print(fitted.summary()) ## print summary if needed
 
-    ## check if arimas folder exist, then make it if it is not
-    if not os.path.isdir('arimas'):
-        os.makedirs('arimas')
-
     ## save the model
     save_pickle(fitted, 'arimas/'+file_path+'.pkl')
 
@@ -188,9 +184,13 @@ tabel_pair = pd.read_excel(namafile,'Pair Table')
 n_pair = len(tabel_pair)
 print('preparation complete! now training ARIMAs...')
 
+## check if arimas folder exist, then make it if it is not
+if not os.path.isdir('arimas'):
+    os.makedirs('arimas')
+
 for i in range(n_pair):
     namanya = tabel_pair["train data name"][i]
-    considered = pd.read_csv(namanya+".csv")
+    considered = pd.read_csv('training data/'+namanya+".csv")
     model = train_model(considered, namanya)
 
     print(f'{namanya} has fitted')

@@ -3,13 +3,13 @@ from datetime import datetime, timedelta
 import pandas as pd
 import numpy as np
 import MetaTrader5 as mt5
-import sys
 import csv
 import os
 import pytz
 from statsmodels.tsa.arima.model import ARIMA
 from statsmodels.iolib.smpickle import load_pickle
 from timeit import default_timer as def_timer
+from tabulate import tabulate
 
 ##==========CLASSES===========
 
@@ -43,6 +43,16 @@ def repair_number_mat(matrik, poin, digit, tipe):
             aja = aja + ' - ' + str(tulis)
             
     return aja
+
+## for printing on tabulate
+def repair_number_tab(matrik, poin, digit, tipe):
+    ini_list = []
+    panjang = len(matrik)
+    for a in range(panjang):
+        tulis = repair_number(matrik[a], poin, digit, tipe)
+        ini_list.append(tulis)
+
+    return ini_list
 
 ## rounding + display for error
 def repair_error(number, poin):
@@ -279,6 +289,10 @@ galat = np.zeros((n_pair))
 now = datetime.now()
 dt_string = now.strftime("%Y%m%d%H%M%S")
 
+## check if logs folder exist, then make it if it is not
+if not os.path.isdir('logs'):
+    os.makedirs('logs')
+
 for k in range(0,n_pair):
     simbol = simbolset[k]
     waktuframe = waktuframeset[k]
@@ -286,7 +300,7 @@ for k in range(0,n_pair):
     poin = np.float_power(10,-1*infosimbol.digits)
 
 ## get recent finished candle, and save it's time
-    timer_rates = mt5.copy_rates_from_pos(simbol, waktuframe, 1, 1) 
+    timer_rates = mt5.copy_rates_from_pos(simbol, waktuframe, 0, 1) 
     timer_frame = pd.DataFrame(timer_rates)
     timer_frame['time']=pd.to_datetime(timer_frame['time'], unit='s')
     saatini.append(timer_frame["time"][0])
@@ -298,7 +312,7 @@ for k in range(0,n_pair):
 ## write csv for record
 ##    datas.append([]) ## write csv of record
 ##    datas[k].append(["Timestamp", "prediction", "close"])
-    with open(namanama[k], 'w', newline='') as file:
+    with open('logs/'+namanama[k], 'w', newline='') as file:
         writer = csv.writer(file)
         writer.writerow(["Timestamp", "Prediction", "Actual", "2.5% Quant", "97.5% Quant",
                          "Prediction 2", "Prediction 3", "Prediction 4", "Prediction 5",
@@ -325,7 +339,7 @@ while True: ## need better while here maybe
         file_path = namamodel[k] ## get model name
         
         ## get candles, for timer
-        timer_rates  = mt5.copy_rates_from_pos(simbol, waktuframe, 1, 1)
+        timer_rates  = mt5.copy_rates_from_pos(simbol, waktuframe, 0, 1)
         timer_frame = pd.DataFrame(timer_rates)
         timer_frame['time']=pd.to_datetime(timer_frame['time'], unit='s')
         
@@ -384,7 +398,7 @@ while True: ## need better while here maybe
                 t33 = repair_number(upperl[k,2], poinset[k], digitset[k], "floor")
                 t34 = repair_number(upperl[k,3], poinset[k], digitset[k], "floor")
                 t35 = repair_number(upperl[k,4], poinset[k], digitset[k], "floor")
-                with open(namanama[k], 'a', newline='') as file:
+                with open('logs/'+namanama[k], 'a', newline='') as file:
                     writer = csv.writer(file)
                     writer.writerow([saatini[k], t1, t2, t3, t4,
                                      t12, t13, t14, t15,
@@ -400,7 +414,7 @@ while True: ## need better while here maybe
             ## model = model_list[k] ##[TEST]
 
             ## predict
-            model = model.apply(close_np)
+            model = model.apply(close_np[:39])
             hasil_fore = model.get_forecast(steps = 5)    
             pred[k,:]  = hasil_fore.predicted_mean ## mean
             lowerl[k,:] = hasil_fore.conf_int(alpha = 0.05)[:,0] ## lower limit
@@ -422,10 +436,16 @@ while True: ## need better while here maybe
 
             print(file_path+' '+cetak_param)
             
-##            ## printing stuff
-            print("Prediciton :", repair_number_mat(pred[k,:], poinset[k], digitset[k], 'round'))
-            print("Lower Limit:", repair_number_mat(lowerl[k,:], poinset[k], digitset[k], 'ceil'))
-            print("Upper Limit:", repair_number_mat(upperl[k,:], poinset[k], digitset[k], 'floor'))
+##          # printing stuff
+            ini_dict = {
+                "Candle": ["0 (Current)", "1", "2", "3", "4"],
+                "Lower Limit": repair_number_tab(lowerl[k,:], poinset[k], digitset[k], 'ceil'),
+                "Prediction":  repair_number_tab(pred[k,:], poinset[k], digitset[k], 'round'),
+                "Upper Limit": repair_number_tab(upperl[k,:], poinset[k], digitset[k], 'floor')
+            }
+            print(tabulate(ini_dict,
+               headers=ini_dict.keys(),
+               tablefmt = 'outline'))
             print(f"Elapsed time: {(end_timer - start_timer):.2f} sec")
 ##
 

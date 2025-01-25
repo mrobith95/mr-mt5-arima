@@ -144,5 +144,12 @@ def train_model(datanya, file_path):
 
     ## save the model
     save_pickle(fitted, 'arimas-online/'+file_path+'.pkl')
+
+    ## archive
+    ## determine the date this code was run, also for naming performance records
+    now = datetime.now()
+    dt_string = now.strftime("%Y%m%d%H%M")
+
+    save_pickle(fitted, 'arimas-online/'+file_path+'_'+dt_string+'.pkl')
     
     return fitted
