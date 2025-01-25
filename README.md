@@ -36,7 +36,7 @@ You need the following to run these codes:
 * statsmodels 0.13.2
 * tabulate 0.9.0
 
-Last 6 items are python packages, that could be installed using `pip install <package_name>==<version_number>`
+Last 6 items are python packages, that could be installed using `pip install <package_name>==<version_number>`.
 
 ## Installation and Usage
 This part would be separated by into sub-sections.
@@ -68,7 +68,7 @@ There are 2 ways to obtain data for fitting models. Any data obtained would be s
 2. Run `get_data_recent.py` to obtain financial data on your MT5, either by double-click the file or run it via your IDE (python's IDLE / VScode)
 
 #### Using History Center
-1. Make an empty folder named `training data` in the same folder as this project.
+1. If you don't have a folder named `training data` in the same folder as this project, make it first.
 2. Visit your MT5's History Center using View -> Symbols -> Bars.
 3. Choose symbol, timeframe, starting date and ending date, then click `Request`. Make sure symbol and timeframe match symbol/timeframe on `Pair Table` sheet.
 4. After data is fully dowloaded, click `Export Bars`.
@@ -105,7 +105,7 @@ You can also fit an ARIMA model each time a new candle show up by running `core-
 Click on your terminal (the same place where forecasts are shown) and press `Ctrl + C` on your keyboard.
 
 ### Logs and Archives ###
-Each time you run `get_data_recent.py` or `train_new_model.py`, you will also receive a copy of data/model for archiving. This archives are flagged by `_[recent data]` in their name. Note that `[recent data]` is taken from the date data of latest candle.
+Each time you retrieve, repair, or fit an ARIMA model, you will also receive a copy of data/model for archiving. This archives are flagged by `_[recent date]` in their name. Note that `[recent date]` is taken from the date data of latest candle.
 
 Model's performance log can be obtained from `logs` folder. Error on the log is the same as error shown on your terminal.
 
