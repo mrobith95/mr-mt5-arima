@@ -6,8 +6,10 @@ Accurate forecasting of financial markets is crucial for successful trading. Thi
 
 ![predict-aarima-pics](https://github.com/user-attachments/assets/b3198cc3-5ce8-4f30-a62a-bd7c4e89fcc1)
 
-## ⚠️__Disclaimer__⚠️
+## __Disclaimer__
+⚠️
 __The forecast generated from this project are for informational purposes only and should not be considered financial advice.__
+⚠️
 
 ## Features
 * 2 ways to obtain/manage data: automated data retrieval from MT5 chart, or use bars data retrieved from MT5 History Center.
