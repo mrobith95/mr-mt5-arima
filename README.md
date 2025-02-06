@@ -111,4 +111,7 @@ Each time you retrieve, repair, or fit an ARIMA model, you will also receive a c
 
 Model's performance log can be obtained from `logs` folder. Error on the log is the same as error shown on your terminal.
 
+### Showing models' properties ###
+Run `show_models.py` to get models' properties, as parameters, coefficients' p-values, etc. (NOTE: Only models trained on `train_new_model.py` would be checked)
+
 
