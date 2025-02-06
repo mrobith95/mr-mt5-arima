@@ -1,8 +1,8 @@
 # mr-mt5-arima
-A set of python script to forecast financial market data on your Metatrader5 using ARIMA.
+A set of python script to forecast financial market data on your Metatrader5 (MT5) using ARIMA.
 
 ## Introduction
-Accurate forecasting of financial markets is crucial for successful trading. This project aims to provide traders with an easily implementable solution for generating price forecasts directly from their MT5 environment. ARIMA itself is a simple model to tune and fit, making it suitable in either in offline or online fitting scenario.
+Accurate forecasting of financial markets is crucial for successful trading. This project aims to provide traders with a simple way to generate price forecasts directly from their MT5. ARIMA itself is a simple model to tune and fit, making it suitable in either in offline or online fitting scenario.
 
 ## ⚠️__Disclaimer__⚠️
 __The forecast generated from this project are for informational purposes only and should not be considered financial advice.__
