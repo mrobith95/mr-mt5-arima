@@ -300,10 +300,10 @@ for k in range(0,n_pair):
     poin = np.float_power(10,-1*infosimbol.digits)
 
 ## get recent finished candle, and save it's time
-    timer_rates = mt5.copy_rates_from_pos(simbol, waktuframe, 0, 1) 
+    timer_rates = mt5.copy_rates_from_pos(simbol, waktuframe, 0, 2) 
     timer_frame = pd.DataFrame(timer_rates)
     timer_frame['time']=pd.to_datetime(timer_frame['time'], unit='s')
-    saatini.append(timer_frame["time"][0])
+    saatini.append(timer_frame["time"][1])
     
     namanama.append(namanyaset[k]+'_record_'+dt_string+'.csv') ## record file name
     namamodel.append(namanyaset[k])
@@ -339,13 +339,14 @@ while True: ## need better while here maybe
         file_path = namamodel[k] ## get model name
         
         ## get candles, for timer
-        timer_rates  = mt5.copy_rates_from_pos(simbol, waktuframe, 0, 1)
+        timer_rates  = mt5.copy_rates_from_pos(simbol, waktuframe, 0, 2)
         timer_frame = pd.DataFrame(timer_rates)
         timer_frame['time']=pd.to_datetime(timer_frame['time'], unit='s')
         
         ## check if new candle just finished
         if timer_frame.iloc[-1]["time"] != saatini[k]:
             saatini[k] = timer_frame.iloc[-1]["time"] # renew timer
+            prevtime = timer_frame.iloc[-2]["time"] # time to be logged
             print("================================")
             print("Time       :", saatini[k])
 
@@ -383,7 +384,7 @@ while True: ## need better while here maybe
                 galat[k] = np.abs(pred[k,0] - close_np[39])
 ##                datas[k].append([saatini[k], pred[k,0], close_np[39]])
                 t1 = repair_number(pred[k,0], poinset[k], digitset[k], "round")
-                t2 = repair_number(close_np[39], poinset[k], digitset[k], "round")
+                t2 = repair_number(close_np[38], poinset[k], digitset[k], "round")
                 t3 = repair_number(lowerl[k,0], poinset[k], digitset[k], "ceil")
                 t4 = repair_number(upperl[k,0], poinset[k], digitset[k], "floor")
                 t12 = repair_number(pred[k,1], poinset[k], digitset[k], "round")
@@ -400,11 +401,12 @@ while True: ## need better while here maybe
                 t35 = repair_number(upperl[k,4], poinset[k], digitset[k], "floor")
                 with open('logs/'+namanama[k], 'a', newline='') as file:
                     writer = csv.writer(file)
-                    writer.writerow([saatini[k], t1, t2, t3, t4,
+                    writer.writerow([prevtime, t1, t2, t3, t4,
                                      t12, t13, t14, t15,
                                      t22, t23, t24, t25,
                                      t32, t33, t34, t35])
-                    
+                
+                print("Prev. Act. : "+str(t2))
                 print("Error      : "+repair_error(galat[k], poinset[k]))
 
             ## load model
@@ -438,7 +440,7 @@ while True: ## need better while here maybe
             
 ##          # printing stuff
             ini_dict = {
-                "Candle": ["0 (Current)", "1", "2", "3", "4"],
+                "Candle": [saatini[k], "1", "2", "3", "4"],
                 "Lower Limit": repair_number_tab(lowerl[k,:], poinset[k], digitset[k], 'ceil'),
                 "Prediction":  repair_number_tab(pred[k,:], poinset[k], digitset[k], 'round'),
                 "Upper Limit": repair_number_tab(upperl[k,:], poinset[k], digitset[k], 'floor')
