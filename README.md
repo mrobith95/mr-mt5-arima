@@ -93,12 +93,12 @@ Here's how to read the output...
 
 * Time: The time as specified at time entry on _current_ (forming) candle.
 * Symbol: Symbol/Ticker name
-* Prev. Act. : Actual close value of previous candle.
+* Prev. Act. : Actual close price of previous candle.
 * Error: Error in terms of point. Only appears on second or later prediction shown.
 * [model_name] model: Rough description about fitted ARIMA model.
 * Prediction table, consist of:
   * Candle time/index. Time/index of the forecasted value. First value is currently forming candle. 1 means candle after current candle, 2 means after that, etc.
-  * Prediction: Model's main prediction.
+  * Prediction: Close price prediction from ARIMA.
   * Lower Limit - Upper Limit: 95% Prediction Interval limit. More specifically, Limits are on 2.5% - 97.5% quantile.
 * Elapsed time: Time spent on performing and show prediction.
 
