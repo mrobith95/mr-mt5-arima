@@ -8,7 +8,7 @@ Accurate forecasting of financial markets is crucial for successful trading. Thi
 
 ## __Disclaimer__
 ⚠️
-__The forecast generated from this project are for informational purposes only and should not be considered as financial advice.__
+__The forecasts generated from this project are for informational purposes only and should not be considered financial advice.__
 ⚠️
 
 ## Features
