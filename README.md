@@ -89,10 +89,11 @@ Run `core-arima-pretrain.py` to use your fitted models for forecasting. New fore
 
 Here's how to read the output...
 
-![baca error](https://github.com/user-attachments/assets/35475fa4-99c4-4b6c-aa9b-31861619e4a9)
+![predict-aarima-pics - Copy](https://github.com/user-attachments/assets/932ff264-3318-4c2b-911b-57048a533044)
 
 * Time: The time as specified at time entry on _current_ (forming) candle.
 * Symbol: Symbol/Ticker name
+* Prev. Act. : Actual close value of previous candle.
 * Error: Error in terms of point. Only appears on second or later prediction shown.
 * [model_name] model: Rough description about fitted ARIMA model.
 * Prediction table, consist of:
